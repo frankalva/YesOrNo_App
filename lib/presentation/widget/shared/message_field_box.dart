@@ -1,15 +1,37 @@
 import 'package:flutter/material.dart';
 
-class MessageFieldBox extends StatelessWidget {
+class MessageFieldBox extends StatefulWidget {
   final ValueChanged onValue;
   const MessageFieldBox({super.key, required this.onValue});
 
   @override
+  State<MessageFieldBox> createState() => _MessageFieldBoxState();
+}
+
+class _MessageFieldBoxState extends State<MessageFieldBox> {
+  late FocusNode myfocusNode;
+  late TextEditingController textFromFieldController;
+  @override
+    void initState() {
+    super.initState();
+    textFromFieldController = TextEditingController();
+    myfocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    textFromFieldController.dispose();
+    // Clean up the focus node when the Form is disposed.
+    myfocusNode.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
-    final textFromFieldController = TextEditingController();
-
-
+    
+    
     final colors = Theme.of(context).colorScheme;
 
     final outlineInputBorder = OutlineInputBorder(
@@ -26,18 +48,18 @@ class MessageFieldBox extends StatelessWidget {
           onPressed: () {
             final text = textFromFieldController.value.text;
             textFromFieldController.clear();
-            onValue(text);
+            widget.onValue(text);
           },
         ));
 
     return TextFormField(
+      focusNode: myfocusNode,
       controller: textFromFieldController,
       decoration: inputDecoration,
       onFieldSubmitted: (value) {
         textFromFieldController.clear();
-        onValue(value);
-      },
-      onChanged: (value) {},
+        widget.onValue(value);
+      }
     );
   }
 }
